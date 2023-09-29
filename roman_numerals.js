@@ -26,12 +26,19 @@ function convertToRoman(num) {
     numArray.push(Number(stringNum[i]));
   }
 
+  if (digits === 1) {
+    result += lessThanTen(num);
+    console.log(result);
+  }
+
   if (digits === 2) {
     if (num >= 10 || num < 40) {
       for (let i = 0; i < numArray[0]; i++) {
         result += numerals[10];
       }
-      result += lessThanTen(numArray[1]);
+      if (numArray[1] !== 0) {
+        result += lessThanTen(numArray[1]);
+      }
       console.log(result);
     }
   }
@@ -39,7 +46,7 @@ function convertToRoman(num) {
   return result;
 }
 
-convertToRoman(19);
+convertToRoman(9);
 
 function lessThanTen(num) {
   let result = "";
