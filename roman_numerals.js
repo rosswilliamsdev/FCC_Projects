@@ -27,29 +27,23 @@ function convertToRoman(num) {
   }
 
   if (digits === 1) {
-    result += lessThanTen(num);
-    console.log(result);
+    result = oneDigit(num);
   }
 
   if (digits === 2) {
-    if (num >= 10 || num < 40) {
-      for (let i = 0; i < numArray[0]; i++) {
-        result += numerals[10];
-      }
-      if (numArray[1] !== 0) {
-        result += lessThanTen(numArray[1]);
-      }
-      console.log(result);
-    }
+    result = twoDigits(num);
   }
 
+  console.log(result);
   return result;
 }
 
-convertToRoman(9);
+convertToRoman(70);
 
-function lessThanTen(num) {
+function oneDigit(num) {
   let result = "";
+
+  if (num === 0) return result;
 
   let counter = 0;
   if (num > 0 && num < 4) {
@@ -72,4 +66,38 @@ function lessThanTen(num) {
   return result;
 }
 
-// do different logic based on the number of digits in the num
+function twoDigits(num) {
+  let result = "";
+  const stringNum = num.toString();
+  let numArray = [];
+
+  for (let i = 0; i < stringNum.length; i++) {
+    numArray.push(Number(stringNum[i]));
+  }
+
+  if (num >= 10 && num < 40) {
+    for (let i = 0; i < numArray[0]; i++) {
+      result += numerals[10];
+    }
+    if (numArray[1] !== 0) {
+      result += oneDigit(numArray[1]);
+    }
+  } else if (num >= 40 && num < 100) {
+    if (numArray[0] === 4) {
+      result = numerals[40] + oneDigit(numArray[1]);
+    } else if (numArray[0] === 5) {
+      result = numerals[50] + oneDigit(numArray[1]);
+    } else if (numArray[0] > 5 && numArray[0] < 9) {
+      result += numerals[50];
+      for (let i = 5; i < numArray[0]; i++) {
+        result += numerals[10];
+      }
+      if (numArray[1] !== 0) {
+        result += oneDigit(numArray[1]);
+      }
+    } else if (numArray[0] === 9) {
+      result = numerals[90] + oneDigit(numArray[1]);
+    }
+  }
+  return result;
+}
