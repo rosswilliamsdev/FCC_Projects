@@ -101,3 +101,27 @@ function twoDigits(num) {
   }
   return result;
 }
+
+function threeDigits(num) {
+  let result = "";
+  const stringNum = num.toString();
+  let numArray = [];
+
+  for (let i = 0; i < stringNum.length; i++) {
+    numArray.push(Number(stringNum[i]));
+  }
+
+  if (num >= 100 && num < 400) {
+    for (let i = 0; i < numArray[0]; i++) {
+      result += numerals[100];
+    }
+    if (numArray[1] === 0) {
+      result += oneDigit(numArray[2]);
+    } else {
+      numArray.shift();
+      let newNum = Number(numArray.join(""));
+      result += twoDigits(newNum);
+    }
+  }
+  return result;
+}
