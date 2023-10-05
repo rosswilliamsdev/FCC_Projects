@@ -4,10 +4,12 @@ function telephoneCheck(str) {
   let firstDigit = /^\d|^\(/;
   let match;
   let digitsArray = [];
+  //   cc = country code is first in the given number
   let ccRegex1 = /1\s\(\d{3}\)\s\d{3}\-\d{4}/;
   let ccRegex2 = /1\s\d{3}\s\d{3}\s\d{4}/;
   let ccRegex3 = /1\s\d{3}\-\d{3}\-\d{4}/;
   let ccRegex4 = /1\(\d{4}\)\d{4}\-\d{4}/;
+  //   ac = area code is first in the given number
   let acRegex1 = /\d{3}\-\d{3}\-\d{4}/;
   let acRegex2 = /\(\d{3}\)\d{3}\-\d{4}/;
   let acRegex3 = /\(\d{3}\)\s\d{3}\-\d{4}/;
