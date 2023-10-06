@@ -91,4 +91,9 @@ function telephoneCheck(str) {
   return false;
 }
 
-telephoneCheck("(555-555-5555");
+function refactoredTelephoneCheck(str) {
+  const regex = /^1?\s?(\d{3}|\(\d{3}\))-?\s?\d{3}-?\s?\d{4}$/
+  return regex.test(str);
+}
+
+console.log(refactoredTelephoneCheck("(785)-555-5555"));
