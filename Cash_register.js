@@ -11,30 +11,33 @@ function checkCashRegister(price, cash, cid) {
     totalCID += cid[i][1];
   }
 
-  let currency = {
-    penny: cid[0][1] / 0.01,
-    nickel: Math.round(cid[1][1] / 0.05),
-    dime: cid[2][1] / 0.1,
-    quarter: cid[3][1] / 0.25,
-    one: cid[4][1] / 1,
-    five: cid[5][1] / 5,
-    ten: cid[6][1] / 10,
-    twenty: cid[7][1] / 20,
-    hundred: cid[8][1] / 100,
-  };
+  // index 0 is name, index 1 is value, index 2 is how many are in the cash drawer
+  let currency = [
+    ["hundred", 100, cid[8][1] / 100],
+    ["twenty", 20, cid[7][1] / 20],
+    ["ten", 10, cid[6][1] / 10],
+    ["five", 5, cid[5][1] / 5],
+    ["one", 1, cid[4][1] / 1],
+    ["quarter", 0.25, cid[3][1] / 0.25],
+    ["dime", 0.1, cid[2][1] / 0.1],
+    ["nickel", 0.05, Math.round(cid[1][1] / 0.05)],
+    ["penny", 0.01, cid[0][1] / 0.01],
+  ];
 
   if (changeDue > totalCID) {
     changeObject.status = "INSUFFICIENT_FUNDS";
-    console.log(changeObject);
     return changeObject;
   }
 
-  for (let i = 0; i < cid.length; i++) {}
-
-  // This fits somehow I know it
-  for (let i = 0; i < cid.length; i++) {
-    while (changeDue >= cid[i][1]) {
-      changeDue -= cid[i][1];
+  for (let i = 0; i < currency.length; i++) {
+    while (changeDue >= currency[i][1]) {
+      if (currency[i][2] === 0) {
+        i++;
+      }
+      changeDue -= Number.parseFloat(currency[i][1]).toFixed(2);
+      currency[i][2] -= 1;
+      changeObject.change.push(currency[i]);
+      console.log(currency, changeDue);
     }
   }
 
@@ -42,7 +45,7 @@ function checkCashRegister(price, cash, cid) {
   return changeObject;
 }
 
-checkCashRegister(19.5, 20, [
+checkCashRegister(3.26, 100, [
   ["PENNY", 1.01],
   ["NICKEL", 2.05],
   ["DIME", 3.1],
@@ -53,3 +56,5 @@ checkCashRegister(19.5, 20, [
   ["TWENTY", 60],
   ["ONE HUNDRED", 100],
 ]);
+
+// choose which curreny based on int/decimal and what the number is divisible by?
