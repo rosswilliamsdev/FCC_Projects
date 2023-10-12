@@ -1,4 +1,4 @@
-let changeObject = {
+let resultObject = {
   status: "",
   change: [],
 };
@@ -8,7 +8,7 @@ function checkCashRegister(price, cash, cid) {
   let totalCID = 0;
 
   for (let i = 0; i < cid.length; i++) {
-    totalCID += Number.parseFloat(cid[i][1]).toFixed(2);
+    totalCID += cid[i][1];
   }
 
   // index 0 is name, index 1 is value, index 2 is how many are in the cash drawer
@@ -25,8 +25,8 @@ function checkCashRegister(price, cash, cid) {
   ];
 
   if (changeDue > totalCID) {
-    changeObject.status = "INSUFFICIENT_FUNDS";
-    return changeObject;
+    resultObject.status = "INSUFFICIENT_FUNDS";
+    return resultObject;
   }
 
   for (let i = 0; i < currency.length; i++) {
@@ -34,21 +34,15 @@ function checkCashRegister(price, cash, cid) {
       if (currency[i][2] === 0) {
         i++;
       }
-
-      changeDue -= currency[i][1];
-      changeDue = changeDue.toFixed(2);
+      changeDue -= Number.parseFloat(currency[i][1]).toFixed(2);
       currency[i][2] -= 1;
-      changeObject.change.push(currency[i]);
-
-      console.log(changeDue);
-      if (changeDue <= 0) {
-        return changeObject;
-      }
+      resultObject.change.push(currency[i]);
+      console.log(currency, changeDue);
     }
   }
 
-  // console.log('Last return:', changeObject)
-  return changeObject;
+  // console.log('Last return:', resultObject)
+  return resultObject;
 }
 
 checkCashRegister(3.26, 100, [
@@ -63,4 +57,4 @@ checkCashRegister(3.26, 100, [
   ["ONE HUNDRED", 100],
 ]);
 
-// choose which curreny based on int/decimal and what the number is divisible by?
+// iterate through the change array to see if there is a match for coin/bill name already. If so, += coin/bill value, if not, push the name of the coin/bill and its value to the array
