@@ -8,7 +8,7 @@ function checkCashRegister(price, cash, cid) {
   let totalCID = 0;
 
   for (let i = 0; i < cid.length; i++) {
-    totalCID += cid[i][1];
+    totalCID += Number.parseFloat(cid[i][1]).toFixed(2);
   }
 
   // index 0 is name, index 1 is value, index 2 is how many are in the cash drawer
@@ -34,10 +34,16 @@ function checkCashRegister(price, cash, cid) {
       if (currency[i][2] === 0) {
         i++;
       }
-      changeDue -= Number.parseFloat(currency[i][1]).toFixed(2);
+
+      changeDue -= currency[i][1];
+      changeDue = changeDue.toFixed(2);
       currency[i][2] -= 1;
       changeObject.change.push(currency[i]);
-      console.log(currency, changeDue);
+
+      console.log(changeDue);
+      if (changeDue <= 0) {
+        return changeObject;
+      }
     }
   }
 
