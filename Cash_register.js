@@ -1,6 +1,6 @@
-let resultObject = {
+let result = {
   status: "",
-  change: [],
+  array: [],
 };
 
 function checkCashRegister(price, cash, cid) {
@@ -11,7 +11,7 @@ function checkCashRegister(price, cash, cid) {
     totalCID += cid[i][1];
   }
 
-  // index 0 is name, index 1 is value, index 2 is how many are in the cash drawer
+  // index 0 is name, index 1 is value/increment, index 2 is how many are in the cash drawer
   let currency = [
     ["hundred", 100, cid[8][1] / 100],
     ["twenty", 20, cid[7][1] / 20],
@@ -24,25 +24,44 @@ function checkCashRegister(price, cash, cid) {
     ["penny", 0.01, cid[0][1] / 0.01],
   ];
 
+  // if the register is out of change
   if (changeDue > totalCID) {
-    resultObject.status = "INSUFFICIENT_FUNDS";
-    return resultObject;
+    result.status = "INSUFFICIENT_FUNDS";
+    return result;
   }
 
+  // iterate through currency matrix from largest bill to smallest coin
   for (let i = 0; i < currency.length; i++) {
+    // while change due > a given bill/coin
     while (changeDue >= currency[i][1]) {
+      // if no more bills/coins move on
       if (currency[i][2] === 0) {
         i++;
       }
+      // change decrements based on bill/coin value
       changeDue -= Number.parseFloat(currency[i][1]).toFixed(2);
+      // number of coins/bills available decrements by 1
       currency[i][2] -= 1;
-      resultObject.change.push(currency[i]);
-      console.log(currency, changeDue);
+      console.log(currency[i][0]);
+
+      // iterate through the result array to see if there is a match for coin/bill name. If so, += coin/bill value, if not, push the name of the coin/bill and its value to the array
+      // change the status of the drawer to open or closed
+      for (let i = 0; i < result.array.length; i++) {
+        if (result.array[i].includes(currency[i][0])) {
+          result.array[i][1] += currency[i][1];
+          currency[i][1] -= 1;
+          console.log("if:", result);
+        } else {
+          result.array.push(currency[i][i]);
+          result.array[i][1] += currency[i][1];
+          currency[i][1] -= 1;
+          console.log("else:", result);
+        }
+      }
     }
   }
 
-  // console.log('Last return:', resultObject)
-  return resultObject;
+  return result;
 }
 
 checkCashRegister(3.26, 100, [
@@ -56,5 +75,3 @@ checkCashRegister(3.26, 100, [
   ["TWENTY", 60],
   ["ONE HUNDRED", 100],
 ]);
-
-// iterate through the change array to see if there is a match for coin/bill name already. If so, += coin/bill value, if not, push the name of the coin/bill and its value to the array
