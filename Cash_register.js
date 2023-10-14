@@ -1,23 +1,8 @@
-let result = {
-  status: "",
-  array: [
-    ["HUNDRED", 0],
-    ["TWENTY", 0],
-    ["TEN", 0],
-    ["FIVE", 0],
-    ["ONE", 0],
-    ["QUARTER", 0],
-    ["DIME", 0],
-    ["NICKEL", 0],
-    ["PENNY", 0],
-  ],
-  change: [],
-};
-
 function checkCashRegister(price, cash, cid) {
   let changeDue = cash - price;
   let totalCID = 0;
-
+  let status = "OPEN";
+  let moneyCount = {};
   for (let i = 0; i < cid.length; i++) {
     totalCID += cid[i][1];
   }
@@ -36,63 +21,41 @@ function checkCashRegister(price, cash, cid) {
   ];
 
   // if the register is out of change
-  // What about if you cannot return exact change?
+  console.log(changeDue, totalCID);
   if (changeDue > totalCID) {
-    result.status = "INSUFFICIENT_FUNDS";
-    return result;
+    return {
+      status: "INSUFFICIENT_FUNDS",
+      change: [],
+    };
+  } else if (changeDue === totalCID) {
+    status = "CLOSED";
   }
 
   // iterate through currency matrix from largest bill to smallest coin
   for (let i = 0; i < currency.length; i++) {
     // while change due > a given bill/coin
-    while (changeDue > currency[i][1]) {
+    while (changeDue >= currency[i][1]) {
       // if no more bills/coins move on
+
+      // change decrements based on bill/coin value
+      // number of coins/bills available decrements by 1
+      currency[i][2] -= 1;
+      let key = currency[i][0];
+      if (moneyCount[key]) {
+        moneyCount[key] += currency[i][1];
+      } else {
+        moneyCount[key] = currency[i][1];
+      }
+      changeDue -= currency[i][1];
+      changeDue = Number(changeDue.toFixed(2));
+      console.log("changeDue", changeDue.toFixed(2));
       if (currency[i][2] === 0) {
         i++;
       }
-      // change decrements based on bill/coin value
-      changeDue -= Number.parseFloat(currency[i][1]).toFixed(2);
-      // number of coins/bills available decrements by 1
-      currency[i][2] -= 1;
-
-      // iterate through the result array to see if there is a match for coin/bill name. If so, += coin/bill value, if not, push the name of the coin/bill and its value to the array
-      // change the status of the drawer to open or closed
-      if (result.array[i].includes(currency[i][0])) {
-        result.array[i][1] += currency[i][1];
-        currency[i][2] -= 1;
-
-        // console.log('if:', result)
-      } else {
-        result.array.push(currency[i][i]);
-        result.array[i][1] += currency[i][1];
-        currency[i][2] -= 1;
-        // console.log('else:',result)
-      }
     }
   }
+  console.log(moneyCount);
+  console.log({ status, change: Object.entries(moneyCount) });
 
-  if (Math.round(changeDue) !== 0) {
-    result.status = "INSUFFICIENT_FUNDS";
-    return result;
-  }
-
-  for (let i = 0; i < result.array.length; i++) {
-    if (result.array[i][1] > 0) {
-      result.change.push(result.array[i]);
-    }
-  }
-
-  return result;
+  return { status, change: Object.entries(moneyCount) };
 }
-
-checkCashRegister(3.26, 100, [
-  ["PENNY", 1.01],
-  ["NICKEL", 2.05],
-  ["DIME", 3.1],
-  ["QUARTER", 4.25],
-  ["ONE", 90],
-  ["FIVE", 55],
-  ["TEN", 20],
-  ["TWENTY", 60],
-  ["ONE HUNDRED", 100],
-]);
