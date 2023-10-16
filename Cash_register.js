@@ -26,7 +26,10 @@ function checkCashRegister(price, cash, cid) {
       change: [],
     };
   } else if (changeDue === totalCID) {
-    status = "CLOSED";
+    return {
+      status: "CLOSED",
+      change: [...cid],
+    };
   }
 
   for (let i = 0; i < currency.length; i++) {
