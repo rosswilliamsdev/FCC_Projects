@@ -2,7 +2,7 @@ function checkCashRegister(price, cash, cid) {
   let changeDue = cash - price;
   let totalCID = 0;
   let status = "OPEN";
-  let moneyCount = {};
+  let result = {};
   for (let i = 0; i < cid.length; i++) {
     totalCID += cid[i][1];
   }
@@ -19,9 +19,7 @@ function checkCashRegister(price, cash, cid) {
     ["NICKEL", 0.05, Math.round(cid[1][1] / 0.05)],
     ["PENNY", 0.01, cid[0][1] / 0.01],
   ];
-
   // if the register is out of change
-  console.log(changeDue, totalCID);
   if (changeDue > totalCID) {
     return {
       status: "INSUFFICIENT_FUNDS",
@@ -31,31 +29,47 @@ function checkCashRegister(price, cash, cid) {
     status = "CLOSED";
   }
 
-  // iterate through currency matrix from largest bill to smallest coin
   for (let i = 0; i < currency.length; i++) {
-    // while change due > a given bill/coin
-    while (changeDue >= currency[i][1]) {
-      // if no more bills/coins move on
+    let key = currency[i][0];
+    let moneyValue = currency[i][1];
+    let moneyQuantity = currency[i][2];
 
-      // change decrements based on bill/coin value
-      // number of coins/bills available decrements by 1
-      currency[i][2] -= 1;
-      let key = currency[i][0];
-      if (moneyCount[key]) {
-        moneyCount[key] += currency[i][1];
+    while (changeDue >= moneyValue) {
+      if (moneyQuantity <= 0) {
+        break;
+      }
+
+      if (result[key]) {
+        result[key] += moneyValue;
       } else {
-        moneyCount[key] = currency[i][1];
+        result[key] = moneyValue;
       }
-      changeDue -= currency[i][1];
+
+      moneyQuantity -= 1;
+      changeDue -= moneyValue;
       changeDue = Number(changeDue.toFixed(2));
-      console.log("changeDue", changeDue.toFixed(2));
-      if (currency[i][2] === 0) {
-        i++;
-      }
     }
   }
-  console.log(moneyCount);
-  console.log({ status, change: Object.entries(moneyCount) });
+  if (changeDue !== 0) {
+    return {
+      status: "INSUFFICIENT_FUNDS",
+      change: [],
+    };
+  }
 
-  return { status, change: Object.entries(moneyCount) };
+  console.log({ status, change: Object.entries(result) });
+
+  return { status, change: Object.entries(result) };
 }
+
+checkCashRegister(19.5, 20, [
+  ["PENNY", 0.5],
+  ["NICKEL", 0],
+  ["DIME", 0],
+  ["QUARTER", 0],
+  ["ONE", 0],
+  ["FIVE", 0],
+  ["TEN", 0],
+  ["TWENTY", 0],
+  ["ONE HUNDRED", 0],
+]);
